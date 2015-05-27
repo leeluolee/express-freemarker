@@ -1,5 +1,5 @@
 
-${name}
+${name!}
 
 <table border=1>
 <#list flowers as flower>

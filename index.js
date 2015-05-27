@@ -27,24 +27,33 @@ module.exports = function( options){
     //   if(err) throw err
       // if data is too long
       // args = [filename, "-D", "tdd(" + path.join( basedir, dataname) + ")", "-o", path.join(basedir, tname)];
-    var args = [filename, "-D", data, "-o", tname ];
+    var args = [filename, "-D", data, "-o", tname  ];
     var fmpp = spawn(path2fmpp, args, function(err, content){
-      console.log( content )
       if(err) throw err;
     })
-    // fmpp.stdout.on('data', function (data) {
-    //   console.log('stdout: ' + data);
-    // });
 
+    var errorMsg = "";
     fmpp.stderr.on('data', function (data) {
-      callback(data)
+      // console.log(data.toString(), 'error')
+      // callback(data.toString())
+    });
+    // @TODO FIX.
+    fmpp.stdout.on('data', function (data) {
+      errorMsg += data.toString();
+      // callback(data.toString())
     });
 
     fmpp.on('close', function (code) {
-      if(code !== 0) return;
-      fs.readFile(tname, 'utf8', function(err, content){
-        callback(err, content);
-        fs.unlink(tname);
+      if(~errorMsg.indexOf(">>> ABORTED! <<<") || code !== 0){
+        var isError = true;
+        callback(errorMsg || "uncatched freemarker parse Error occurs in " + filename)
+      }
+      fs.exists(tname, function(flag){
+        if(isError) return fs.unlink(tname, function(){});
+        fs.readFile(tname, 'utf8', function(err, content){
+          callback(err, content);
+          fs.unlink(tname, function(){});
+        })
       })
     });
 
