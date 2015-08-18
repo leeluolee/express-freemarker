@@ -7,13 +7,17 @@ var fs = require("fs");
 var path2fmpp = path.join( __dirname, "./libs/bin/fmpp" );
 
 
-module.exports
-
 module.exports = function( options){
   options = options || {};
   var staticTmp = options.tmp;
 
   return function render( filename, data, callback ){
+
+    var sourceRoot = data.settings.views;
+    //clean the data
+    delete data.settings;
+    delete data._locals;
+    delete data.cache;
 
     var data = JSON.stringify(data);
     var dirname = staticTmp || path.dirname(filename);
@@ -27,7 +31,7 @@ module.exports = function( options){
     //   if(err) throw err
       // if data is too long
       // args = [filename, "-D", "tdd(" + path.join( basedir, dataname) + ")", "-o", path.join(basedir, tname)];
-    var args = [filename, "-D", data, "-o", tname  ];
+    var args = [filename, "-D", data, "-o", tname ,"-S", sourceRoot  ];
     var fmpp = spawn(path2fmpp, args, {})
 
     var errorMsg = "";
