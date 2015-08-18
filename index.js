@@ -28,9 +28,7 @@ module.exports = function( options){
       // if data is too long
       // args = [filename, "-D", "tdd(" + path.join( basedir, dataname) + ")", "-o", path.join(basedir, tname)];
     var args = [filename, "-D", data, "-o", tname  ];
-    var fmpp = spawn(path2fmpp, args, function(err, content){
-      if(err) throw err;
-    })
+    var fmpp = spawn(path2fmpp, args, {})
 
     var errorMsg = "";
     fmpp.stderr.on('data', function (data) {
