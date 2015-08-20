@@ -4,7 +4,8 @@ var mkdirp = require("mkdirp");
 var path = require("path");
 var fs = require("fs");
 
-var path2fmpp = path.join( __dirname, "./libs/bin/fmpp" );
+
+var path2fmpp = path.join( __dirname, "./libs/bin/fmpp" +(process.platform==='win32'?'.bat':'') );
 
 
 module.exports = function( options){
